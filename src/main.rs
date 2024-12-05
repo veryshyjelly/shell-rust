@@ -40,14 +40,7 @@ fn main() {
                 exit(code);
             }
             "echo" => {
-                for i in 0..args.len() {
-                    print!("{}", args[i]);
-                    if args[i] != " " && i < args.len() - 1 && args[i + 1] != " " {
-                        print!(" ");
-                    }
-                }
-                println!();
-                // println!("{}", args.join(" "));
+                println!("{}", args.join(""));
             }
             "type" => {
                 sh_type(&args[0]);
