@@ -1,6 +1,5 @@
 #[allow(unused_imports)]
 use regex::Regex;
-use regex::RegexSet;
 use std::{
     env,
     io::{self, Write},
@@ -19,10 +18,7 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
 
-        // let re =
-        //     RegexSet::new(&[r#"(?<arg>\w+)"#, r#"'(?<arg>.*?)'"#, r#""(?<arg>.*?)""#]).unwrap();
-
-        let re = Regex::new(r#"(?<arg1>\w+)|'(?<arg2>.*?)'|"(?<arg3>.*?)""#).unwrap();
+        let re = Regex::new(r#"'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg1>\S+)"#).unwrap();
 
         let mut command_split = re.captures_iter(input.trim());
 
