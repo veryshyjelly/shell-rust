@@ -16,15 +16,18 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
 
-        let command = input.trim();
+        let mut command_split = input.trim().split(" ");
 
-        let re_exit = Regex::new(r"exit (?<code>\w+)").unwrap();
+        let command = command_split.next().unwrap();
+        let args: Vec<&str> = command_split.collect();
 
-        if let Some(code) = re_exit.captures(command) {
-            let code_point: i32 = code["code"].parse().unwrap();
-            exit(code_point);
+        if command == "exit" {
+            let code = args[0].parse().unwrap();
+            exit(code);
+        } else if command == "echo" {
+            println!("{}", args.join(" "));
         } else {
-            println!("{}: command not found", command);
+            println!("{}: invalid command", command);
         }
     }
 }
