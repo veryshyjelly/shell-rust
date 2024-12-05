@@ -52,6 +52,7 @@ fn sh_type(arg: &str) {
             let f = f.unwrap();
             if f.file_name().into_string().unwrap() == arg {
                 println!("{} is {}", arg, f.path().to_str().unwrap());
+                return;
             }
         }
     }
