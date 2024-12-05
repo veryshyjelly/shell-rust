@@ -17,7 +17,7 @@ fn main() {
         let stdin = io::stdin();
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
-        let re = Regex::new(r#"'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg4>\\.)|(?<arg1>([^\\\s]+))"#)
+        let re = Regex::new(r#"(?<arg4>\\.)|'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg1>([^\\\s]+))"#)
             .unwrap();
 
         let mut command_split = re.captures_iter(input.trim());
@@ -32,7 +32,6 @@ fn main() {
                     + x.name("arg4").map_or("", |x| x.as_str().split_at(1).1))
                 .to_string()
             })
-            .filter(|x| !x.trim().is_empty())
             .collect();
 
         match command.as_str() {
@@ -41,7 +40,13 @@ fn main() {
                 exit(code);
             }
             "echo" => {
-                println!("{}", args.join(" "));
+                for i in 0..args.len() {
+                    print!("{}", args[i]);
+                    if i < args.len() - 1 && args[i + 1] != " " {
+                        print!(" ");
+                    }
+                }
+                // println!("{}", args.join(" "));
             }
             "type" => {
                 sh_type(&args[0]);
