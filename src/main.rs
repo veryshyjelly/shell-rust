@@ -21,13 +21,29 @@ fn main() {
         let command = command_split.next().unwrap();
         let args: Vec<&str> = command_split.collect();
 
-        if command == "exit" {
-            let code = args[0].parse().unwrap();
-            exit(code);
-        } else if command == "echo" {
-            println!("{}", args.join(" "));
-        } else {
-            println!("{}: command not found", command);
+        match command {
+            "exit" => {
+                let code = args[0].parse().unwrap();
+                exit(code);
+            }
+            "echo" => {
+                println!("{}", args.join(" "));
+            }
+            "type" => {
+                sh_type(args[0]);
+            }
+            _ => {
+                println!("{}: command not found", command);
+            }
         }
+    }
+}
+
+fn sh_type(arg: &str) {
+    let builtin_commads = ["exit", "echo", "type"];
+    if builtin_commads.contains(&arg) {
+        println!("{} is a shell builtin", arg);
+    } else {
+        println!("{}: not found", arg);
     }
 }
