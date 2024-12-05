@@ -46,6 +46,7 @@ fn main() {
                         print!(" ");
                     }
                 }
+                println!();
                 // println!("{}", args.join(" "));
             }
             "type" => {
