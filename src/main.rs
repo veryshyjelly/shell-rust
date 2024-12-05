@@ -43,7 +43,7 @@ fn sh_type(arg: &str) {
     let builtin_commads = ["exit", "echo", "type"];
 
     let path = std::env::var("PATH").unwrap();
-    println!("PATH = {}", path);
+    // println!("PATH = {}", path);
     let folders: Vec<&str> = path.split(":").collect();
 
     for folder in folders {
