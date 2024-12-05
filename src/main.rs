@@ -2,7 +2,8 @@
 use regex::Regex;
 use std::{
     io::{self, Write},
-    process::exit,
+    path::PathBuf,
+    process::{exit, Command},
 };
 
 fn main() {
@@ -32,35 +33,48 @@ fn main() {
             "type" => {
                 sh_type(args[0]);
             }
-            _ => {
-                println!("{}: command not found", command);
+            comm => {
+                if let Some(path) = search_in_path(comm) {
+                    run_exec(path, args);
+                } else {
+                    println!("{}: command not found", command);
+                }
             }
         }
     }
 }
 
-fn sh_type(arg: &str) {
+fn run_exec(path: PathBuf, args: Vec<&str>) {
+    let mut c = Command::new(path).args(args).spawn().unwrap();
+    c.wait().unwrap();
+}
+
+fn sh_type(comm: &str) {
     let builtin_commads = ["exit", "echo", "type"];
 
-    let path = std::env::var("PATH").unwrap();
-
-    if builtin_commads.contains(&arg) {
-        println!("{} is a shell builtin", arg);
+    if builtin_commads.contains(&comm) {
+        println!("{} is a shell builtin", comm);
         return;
     }
 
-    let folders: Vec<&str> = path.split(":").collect();
+    if let Some(path) = search_in_path(comm) {
+        println!("{} is {}", comm, path.as_os_str().to_str().unwrap())
+    }
 
+    println!("{}: not found", comm);
+}
+
+fn search_in_path(comm: &str) -> Option<PathBuf> {
+    let path = std::env::var("PATH").unwrap();
+    let folders: Vec<&str> = path.split(":").collect();
     for folder in folders {
         let dir = std::fs::read_dir(folder).unwrap();
         for f in dir {
             let f = f.unwrap();
-            if f.file_name().into_string().unwrap() == arg {
-                println!("{} is {}", arg, f.path().to_str().unwrap());
-                return;
+            if f.file_name().into_string().unwrap() == comm {
+                return Some(f.path());
             }
         }
     }
-
-    println!("{}: not found", arg);
+    return None;
 }
