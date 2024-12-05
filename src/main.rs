@@ -38,6 +38,14 @@ fn main() {
                 let current_dir = env::current_dir().unwrap();
                 println!("{}", current_dir.display());
             }
+            "cd" => {
+                let path = std::path::Path::new(args[0]);
+                if path.exists() {
+                    env::set_current_dir(path).unwrap();
+                } else {
+                    println!("cd: {}: No such file or directory", args[0]);
+                }
+            }
             comm => {
                 if let Some(path) = search_in_path(comm) {
                     run_exec(path, args);
