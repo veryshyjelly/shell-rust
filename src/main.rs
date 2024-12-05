@@ -46,6 +46,7 @@ fn sh_type(arg: &str) {
 
     if builtin_commads.contains(&arg) {
         println!("{} is a shell builtin", arg);
+        return;
     }
 
     let folders: Vec<&str> = path.split(":").collect();
