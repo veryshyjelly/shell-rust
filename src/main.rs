@@ -3,7 +3,7 @@ use regex::Regex;
 use std::{
     env,
     io::{self, Write},
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{exit, Command},
 };
 
@@ -39,7 +39,12 @@ fn main() {
                 println!("{}", current_dir.display());
             }
             "cd" => {
-                let path = std::path::Path::new(args[0]);
+                let path = if args[0] == "~" {
+                    env::var("HOME").unwrap()
+                } else {
+                    args[0].to_string()
+                };
+                let path = Path::new(&path);
                 if path.exists() {
                     env::set_current_dir(path).unwrap();
                 } else {
