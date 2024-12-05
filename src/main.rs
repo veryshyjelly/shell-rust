@@ -58,7 +58,8 @@ fn sh_type(comm: &str) {
     }
 
     if let Some(path) = search_in_path(comm) {
-        println!("{} is {}", comm, path.as_os_str().to_str().unwrap())
+        println!("{} is {}", comm, path.as_os_str().to_str().unwrap());
+        return;
     }
 
     println!("{}: not found", comm);
