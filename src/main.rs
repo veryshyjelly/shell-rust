@@ -41,6 +41,21 @@ fn main() {
 
 fn sh_type(arg: &str) {
     let builtin_commads = ["exit", "echo", "type"];
+
+    let path = std::env::var("PATH").unwrap();
+    println!("PATH = {}", path);
+    let folders: Vec<&str> = path.split(":").collect();
+
+    for folder in folders {
+        let dir = std::fs::read_dir(folder).unwrap();
+        for f in dir {
+            let f = f.unwrap();
+            if f.file_name().into_string().unwrap() == arg {
+                println!("{} is {}", arg, f.path().to_str().unwrap());
+            }
+        }
+    }
+
     if builtin_commads.contains(&arg) {
         println!("{} is a shell builtin", arg);
     } else {
