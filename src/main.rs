@@ -17,22 +17,14 @@ fn main() {
         let stdin = io::stdin();
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
-        let re = Regex::new(r#"(?<arg4>\\.)|'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg1>([^\\\s]+))"#)
-            .unwrap();
+        // let re = Regex::new(r#"(?<arg4>\\.)|'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg1>([^\\\s]+))"#)
+        // .unwrap();
 
-        let mut command_split = re.captures_iter(input.trim());
+        // let mut command_split = re.captures_iter(input.trim());
 
-        let command = command_split.next().unwrap()["arg1"].to_string();
-        let args: Vec<String> = command_split
-            .map(|x| {
-                (String::new()
-                    + x.name("arg1").map_or("", |x| x.as_str())
-                    + x.name("arg2").map_or("", |x| x.as_str())
-                    + x.name("arg3").map_or("", |x| x.as_str())
-                    + x.name("arg4").map_or("", |x| x.as_str().split_at(1).1))
-                .to_string()
-            })
-            .collect();
+        let parts: Vec<String> = parse_arguments(input.trim());
+        let command = &parts[0];
+        let args = parts[1..].to_vec();
 
         match command.as_str() {
             "exit" => {
@@ -40,7 +32,13 @@ fn main() {
                 exit(code);
             }
             "echo" => {
-                println!("{}", args.join(""));
+                for i in 0..args.len() {
+                    print!("{}", args[i]);
+                    if args[i] != " " && i < args.len() - 1 && args[i + 1] != " " {
+                        print!(" ");
+                    }
+                }
+                println!();
             }
             "type" => {
                 sh_type(&args[0]);
@@ -61,6 +59,64 @@ fn main() {
             }
         }
     }
+}
+
+fn parse_arguments(input: &str) -> Vec<String> {
+    let mut args = Vec::new();
+    let mut current = String::new();
+    let mut in_single_quotes = false;
+    let mut in_double_quotes = false;
+    let mut escape_next = false;
+
+    for c in input.chars() {
+        if escape_next {
+            current.push(c);
+            escape_next = false;
+            continue;
+        }
+        match c {
+            '\\' if !in_single_quotes && !in_double_quotes => {
+                // Escape next character inside double quotes
+                escape_next = true;
+            }
+            '"' if in_double_quotes => {
+                // End double-quoted argument
+                in_double_quotes = false;
+                args.push(current);
+                current = String::new();
+            }
+            '"' if !in_single_quotes => {
+                // Start double-quoted argument
+                in_double_quotes = true;
+            }
+            '\'' if in_single_quotes => {
+                // End single-quoted argument
+                in_single_quotes = false;
+                args.push(current);
+                current = String::new();
+            }
+            '\'' if !in_double_quotes => {
+                // Start single-quoted argument
+                in_single_quotes = true;
+            }
+            ' ' if !in_single_quotes && !in_double_quotes => {
+                // Space outside quotes ends the current argument
+                if !current.is_empty() {
+                    args.push(current);
+                    current = String::new();
+                }
+            }
+            _ => {
+                // Add character to the current argument
+                current.push(c);
+            }
+        }
+    }
+    // Push the last argument if there's any
+    if !current.is_empty() {
+        args.push(current);
+    }
+    args
 }
 
 fn cd(arg: &String) {
