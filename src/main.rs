@@ -27,7 +27,7 @@ fn main() {
         } else if command == "echo" {
             println!("{}", args.join(" "));
         } else {
-            println!("{}: invalid command", command);
+            println!("{}: command not found", command);
         }
     }
 }
