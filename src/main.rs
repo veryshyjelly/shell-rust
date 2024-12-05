@@ -17,8 +17,7 @@ fn main() {
         let stdin = io::stdin();
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
-
-        let re = Regex::new(r#"'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg1>\S+)"#).unwrap();
+        let re = Regex::new(r#"'(?<arg2>.*?)'|"(?<arg3>.*?)"|(?<arg4>\\.)|(?<arg1>\S+)"#).unwrap();
 
         let mut command_split = re.captures_iter(input.trim());
 
@@ -28,7 +27,8 @@ fn main() {
                 (String::new()
                     + x.name("arg1").map_or("", |x| x.as_str())
                     + x.name("arg2").map_or("", |x| x.as_str())
-                    + x.name("arg3").map_or("", |x| x.as_str()))
+                    + x.name("arg3").map_or("", |x| x.as_str())
+                    + x.name("arg4").map_or("", |x| x.as_str().split_at(1).1))
                 .to_string()
             })
             .collect();
