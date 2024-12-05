@@ -1,6 +1,7 @@
 #[allow(unused_imports)]
 use regex::Regex;
 use std::{
+    env,
     io::{self, Write},
     path::PathBuf,
     process::{exit, Command},
@@ -33,6 +34,10 @@ fn main() {
             "type" => {
                 sh_type(args[0]);
             }
+            "pwd" => {
+                let current_dir = env::current_dir().unwrap();
+                println!("{}", current_dir.display());
+            }
             comm => {
                 if let Some(path) = search_in_path(comm) {
                     run_exec(path, args);
@@ -58,7 +63,7 @@ fn sh_type(comm: &str) {
     }
 
     if let Some(path) = search_in_path(comm) {
-        println!("{} is {}", comm, path.as_os_str().to_str().unwrap());
+        println!("{} is {}", comm, path.display());
         return;
     }
 
@@ -66,7 +71,7 @@ fn sh_type(comm: &str) {
 }
 
 fn search_in_path(comm: &str) -> Option<PathBuf> {
-    let path = std::env::var("PATH").unwrap();
+    let path = env::var("PATH").unwrap();
     let folders: Vec<&str> = path.split(":").collect();
     for folder in folders {
         let dir = std::fs::read_dir(folder).unwrap();
