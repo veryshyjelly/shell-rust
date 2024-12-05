@@ -42,7 +42,7 @@ fn main() {
             "echo" => {
                 for i in 0..args.len() {
                     print!("{}", args[i]);
-                    if i < args.len() - 1 && args[i + 1] != " " {
+                    if args[i] != " " && i < args.len() - 1 && args[i + 1] != " " {
                         print!(" ");
                     }
                 }
