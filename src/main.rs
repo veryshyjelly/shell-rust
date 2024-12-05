@@ -55,7 +55,7 @@ fn run_exec(path: PathBuf, args: Vec<&str>) {
 }
 
 fn sh_type(comm: &str) {
-    let builtin_commads = ["exit", "echo", "type"];
+    let builtin_commads = ["exit", "echo", "type", "pwd"];
 
     if builtin_commads.contains(&comm) {
         println!("{} is a shell builtin", comm);
