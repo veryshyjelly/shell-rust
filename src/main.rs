@@ -7,7 +7,7 @@ use std::{
 };
 
 mod arg;
-mod cmd;
+mod cmds;
 
 fn main() {
     // Uncomment this block to pass the first stage
@@ -34,18 +34,18 @@ fn main() {
                 println!("{}", args.join(" "));
             }
             "type" => {
-                cmd::sh_type(&args[0]);
+                cmds::sh_type(&args[0]);
             }
             "pwd" => {
                 let current_dir = env::current_dir().unwrap();
                 println!("{}", current_dir.display());
             }
             "cd" => {
-                cmd::cd(&args[0]);
+                cmds::cd(&args[0]);
             }
             comm => {
-                if let Some(path) = cmd::search_in_path(comm) {
-                    cmd::run_exec(path, args);
+                if let Some(path) = cmds::search_in_path(comm) {
+                    cmds::run_exec(path, args);
                 } else {
                     println!("{}: command not found", command);
                 }
