@@ -71,10 +71,6 @@ impl Argument {
         }
         Some(Argument { args })
     }
-
-    pub fn get<I: SliceIndex<[String]>>(&self, index: I) -> Option<&I::Output> {
-        self.args.get(index)
-    }
 }
 
 impl<I: SliceIndex<[String]>> Index<I> for Argument {
